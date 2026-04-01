@@ -1,89 +1,133 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <SDL2/SDL.h>
 
-//Global variables
+// Global variables
 bool is_running = false;
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+// Declare a pointer to an array of unsigned int 32 elements for colour buffer
+uint32_t *colour_buffer = NULL;
+int window_width = 800;
+int window_height = 600;
 
-bool initalize_window(void){
-	//Check if SDL was initialized successfully
-	//C has no exceptions, so we have to use return values to check for errors
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+bool initalize_window(void)
+{
+	// Check if SDL was initialized successfully
+	// C has no exceptions, so we have to use return values to check for errors
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+	{
 		fprintf(stderr, "Failed to initialize SDL\n");
 		return false;
 	}
-	//Create SDL Window in the centre of the screen with dimensions 800x600 and no border
+	// Create SDL Window in the centre of the screen with dimensions 800x600 and no border
 	window = SDL_CreateWindow(
 		NULL,
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		800,
-		600,
-		SDL_WINDOW_BORDERLESS
-	);
-	//Check if the window was created successfully
-	if (!window){
+		window_width,
+		window_height,
+		SDL_WINDOW_BORDERLESS);
+	// Check if the window was created successfully
+	if (!window)
+	{
 		fprintf(stderr, "Failed to create SDL Window\n");
 		return false;
 	}
 
-	//Create SDL Renderer -1 means gets the first default rendering driver and 0 means no flags
+	// Create SDL Renderer -1 means gets the first default rendering driver and 0 means no flags
 	renderer = SDL_CreateRenderer(window, -1, 0);
-	//Check if the renderer was created successfully
-	if (!renderer){
+	// Check if the renderer was created successfully
+	if (!renderer)
+	{
 		fprintf(stderr, "Failed to create SDL Renderer\n");
 		return false;
 	}
-	
-	//Passed all checks, return true
+
+	// Passed all checks, return true
 	return true;
 }
 
-void setup(void){
-
-}
-
-void process_input(void){
-	SDL_Event event;
-	//Non blocking function, so render loop never stalls waiting for input.
-	SDL_PollEvent(&event);
-
-	switch(event.type){
-		case SDL_QUIT:
-			is_running = false;
-			break;
-		case SDL_KEYDOWN:
-			if (event.key.keysym.sym == SDLK_ESCAPE)
-				is_running = false;
-			break;
-			
+void setup(void)
+{
+	// Allocate the required bytes in memory for colour buffer
+	// Should be width * height * bytes per pixel (4 for RGBA)
+	// malloc returns a pointer to the allocated memory so we have to cast it to the correct type (uint32_t*)
+	// malloc needs number of bytes to allocate the memory so we to multyiple the size of a uint32_t by number of pixels (width * height)
+	// the first uint32_t is the type of the pointer, casting the void* returned by malloc to uint32_t* so we can use it as an array of uint32_t
+	colour_buffer = (uint32_t *)malloc(sizeof(uint32_t) * window_width * window_height);
+	// In real production code you should check if malloc succeeded and returned a non NULL pointer
+	if (!colour_buffer)
+	{
+		fprintf(stderr, "Failed to allocate memory for colour buffer\n");
+		exit(1); // Exit with an error code
+	}
+	else
+	{
+		colour_buffer[(window_width * 100) + 100] = 0xFFFF0000; // Set the pixel at (100,100) to red in RGBA format
+		colour_buffer[(window_width * 10) + 100] = 0xFFFF00FF;	// Set the pixel at (10,100) to Purple in RGBA format
 	}
 }
 
-void update(void){
+void process_input(void)
+{
+	SDL_Event event;
+	// Non blocking function, so render loop never stalls waiting for input.
+	SDL_PollEvent(&event);
 
+	switch (event.type)
+	{
+	case SDL_QUIT:
+		is_running = false;
+		break;
+	case SDL_KEYDOWN:
+		if (event.key.keysym.sym == SDLK_ESCAPE)
+			is_running = false;
+		break;
+	}
 }
 
-void render(void){
-	SDL_SetRenderDrawColor(renderer,0,255,0,255);
+void update(void)
+{
+}
+
+void destroy_window(void)
+{
+	// Free the colour buffer memory
+	free(colour_buffer);
+	colour_buffer = NULL;
+
+	// Destroy the renderer and window by calling the appropriate SDL functions and passing in the pointers to the renderer and window
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	// note how we destroy in reverse order of creation, first the renderer then the window, then quit SDL
+}
+
+void render(void)
+{
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	SDL_RenderClear(renderer);
 
-	//Present the back buffer to the screen
+	// Present the back buffer to the screen
 	SDL_RenderPresent(renderer);
-
 }
 
-int main(void){
+int main(void)
+{
 	is_running = initalize_window();
 
 	setup();
 
-	while(is_running){
+	while (is_running)
+	{
 		process_input();
 		update();
 		render();
 	}
+
+	// Free the colour buffer memory
+	destroy_window();
 	return 0;
 }
