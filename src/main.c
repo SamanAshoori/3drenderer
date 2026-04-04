@@ -27,6 +27,15 @@ bool initalize_window(void)
 		fprintf(stderr, "Failed to initialize SDL\n");
 		return false;
 	}
+
+	//USE SDL to get maximum width and height of the display we are rendering with
+	SDL_DisplayMode displaymode;
+	//passes the address of display mode to modify the data in it
+	SDL_GetCurrentDisplayMode(0,&displaymode);
+	
+	window_width = displaymode.w;
+	window_height = displaymode.h;
+
 	// Create SDL Window in the centre of the screen with dimensions 800x600 and no border
 	window = SDL_CreateWindow(
 		NULL,
