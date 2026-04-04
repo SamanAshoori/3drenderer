@@ -6,11 +6,17 @@
 // Global variables
 bool is_running = false;
 SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
+SDL_Renderer *renderer = NULL; 
+
 // Declare a pointer to an array of unsigned int 32 elements for colour buffer
 uint32_t *colour_buffer = NULL;
+SDL_Texture* colour_buffer_texture = NULL;
+
 int window_width = 800;
 int window_height = 600;
+
+//Set colour buffertexture
+
 
 bool initalize_window(void)
 {
@@ -46,6 +52,8 @@ bool initalize_window(void)
 	}
 
 	// Passed all checks, return true
+	
+	
 	return true;
 }
 
@@ -65,8 +73,9 @@ void setup(void)
 	}
 	else
 	{
-		colour_buffer[(window_width * 100) + 100] = 0xFFFF0000; // Set the pixel at (100,100) to red in RGBA format
-		colour_buffer[(window_width * 10) + 100] = 0xFFFF00FF;	// Set the pixel at (10,100) to Purple in RGBA format
+		//SDL_PIxelFormat means that the pixels are ALPHA,RGB Colours and each pixel has 8 bits which is why its called AGBR8888
+		//streaming means we will updating the texture frame by frame
+		colour_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 	}
 }
 
@@ -90,7 +99,34 @@ void process_input(void)
 
 void update(void)
 {
+
 }
+
+void render_colour_buffer(void){
+	SDL_UpdateTexture(
+		colour_buffer_texture,
+		NULL,
+		colour_buffer,
+		(int)(window_width * sizeof(uint32_t))
+		
+	);
+	SDL_RenderCopy(
+		renderer,
+		colour_buffer_texture,
+		NULL,
+		NULL
+	);
+}
+
+void clear_color_buffer(uint32_t colour){
+	for (int y = 0; y < window_height;y++){
+		for (int x = 0; x < window_width;x++){
+			colour_buffer[(window_width * y) + x] = colour;
+		}
+	}
+}
+
+
 
 void destroy_window(void)
 {
@@ -107,9 +143,14 @@ void destroy_window(void)
 
 void render(void)
 {
-	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
+	
+
+	clear_color_buffer(0xFFFFFF00);
+	render_colour_buffer();
+	
 	// Present the back buffer to the screen
 	SDL_RenderPresent(renderer);
 }
