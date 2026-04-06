@@ -1,0 +1,24 @@
+#ifndef DISPLAY_H
+#define DISPLAY_H
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <SDL2/SDL.h>
+
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
+// Declare a pointer to an array of unsigned int 32 elements for colour buffer
+extern uint32_t *colour_buffer;
+extern SDL_Texture* colour_buffer_texture;
+
+extern int window_width;
+extern int window_height;
+
+bool initalize_window(void);
+void draw_grid(int grid_size);
+void draw_rect(int start_x,int start_y, int height, int width, uint32_t colour);
+void render_colour_buffer(void);
+void clear_color_buffer(uint32_t colour);
+void destroy_window(void);
+
+#endif
