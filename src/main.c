@@ -59,7 +59,8 @@ void render(void)
 
 	clear_color_buffer(0xFF000000); // red background
 	draw_grid(100);
-	draw_rect(200,200,400,800,0xFF0000FF);
+	draw_rect(200,200,100,200,0xFF0000FF);
+	draw_pixel(10,10,0xFFFFFF00);
 	render_colour_buffer();
 	
 	

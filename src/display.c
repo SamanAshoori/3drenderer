@@ -100,6 +100,14 @@ void draw_grid(int grid_size){
 	
 }
 
+void draw_pixel(int x,int y, uint32_t colour){
+    if (x < window_width && y < window_height){
+        colour_buffer[(window_width * y) + x] = colour;
+        //because once the width is over you need a new row which is why its y before x
+    }
+    
+}
+
 void draw_rect(int x,int y, int height, int width, uint32_t colour){
 
 
