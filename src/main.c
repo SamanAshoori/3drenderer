@@ -136,8 +136,30 @@ void clear_color_buffer(uint32_t colour){
 	}
 }
 
+void draw_grid(int grid_size){
+	uint32_t colour;
+	colour = 0xFFFFFFFF;
+
+	for (int y = 0; y < window_height;y++){
+		for (int x = 0; x < window_width;x++){
+			if(x % grid_size == 0 || y % grid_size == 0){
+				colour_buffer[(window_width * y) + x] = colour;
+			}
+		}
+	}
+	
+}
+
+void draw_rect(int start_x,int start_y, int height, int width, uint32_t colour){
 
 
+	for (int y = 0; y < height;y++){
+		for (int x = 0; x < width;x++){
+				colour_buffer[(window_width * (y + start_y)) + (x + start_x)] = colour;
+		}
+	}
+
+}
 void destroy_window(void)
 {
 	// Free the colour buffer memory
@@ -156,10 +178,11 @@ void render(void)
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
-	
-
-	clear_color_buffer(0xFFFFFF00);
+	clear_color_buffer(0xFF000000); // red background
+	draw_grid(100);
+	draw_rect(200,200,400,800,0xFF0000FF);
 	render_colour_buffer();
+	
 	
 	// Present the back buffer to the screen
 	SDL_RenderPresent(renderer);
