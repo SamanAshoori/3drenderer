@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <SDL2/SDL.h>
 #include "display.h"
+#include "vector.h"
 
 // Global variables
 bool is_running = false;
