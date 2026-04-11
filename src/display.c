@@ -120,6 +120,17 @@ void draw_rect(int x,int y, int height, int width, uint32_t colour){
 	}
 
 }
+
+void draw_rectangle(int x,int y, int height, int width, uint32_t colour){
+	for (int i = 0; i <width;i++){
+		for(int j = 0; j < height; j++){
+			int current_x = x + i;
+			int current_y = y + j;
+			draw_pixel(i,j,0xff0000ff);
+		}
+	}
+
+}
 void destroy_window(void)
 {
 	// Free the colour buffer memory
