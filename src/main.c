@@ -8,6 +8,12 @@
 // Global variables
 bool is_running = false;
 
+//////////////////////
+//	Declare an array of vectors/points
+///////////////////////////
+#define N_POINTS (9 * 9 * 9)
+vec3_t cube_points[N_POINTS]; //9X9X9 cube;
+
 void setup(void)
 {
 	// Allocate the required bytes in memory for colour buffer
@@ -27,6 +33,20 @@ void setup(void)
 		//SDL_PIxelFormat means that the pixels are ALPHA,RGB Colours and each pixel has 8 bits which is why its called AGBR8888
 		//streaming means we will updating the texture frame by frame
 		colour_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
+	}
+
+	int point_count = 0;
+
+	//Start loading my array of vectors
+	//from -1 to 1 (in this 9x9x9 cube)
+	for(float x = -1; x<= 1; x += 0.25){
+		for(float y = -1; y<= 1; y += 0.25 ){
+			for(float z = -1; z<= 1; z += 0.25){
+				//create a new vec3 for each run of the loop
+				vec3_t new_point = {.x = x,.y = y,.z = z};
+				cube_points[point_count++] = new_point;
+			}
+		}
 	}
 }
 
