@@ -70,7 +70,7 @@ void process_input(void)
 
 void update(void)
 {
-
+	//ToDO
 }
 
 void render(void)
