@@ -68,6 +68,16 @@ void process_input(void)
 	}
 }
 
+
+//Functions that recieves 3d vector and retruns a 2d point
+vec2_t project(vec3_t point){
+	vec2_t projected_point = {
+		.x =point.x,
+		.y =point.y
+	};
+	return projected_point;
+}
+
 void update(void)
 {
 	//ToDO
