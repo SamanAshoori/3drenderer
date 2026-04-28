@@ -88,9 +88,15 @@ vec2_t project(vec3_t point){
 
 void update(void)
 {
-	//Add delta time
-	SDL_Delay(FRAME_TARGET_TIME);
 	previous_frame_time = SDL_GetTicks();
+	uint64_t time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - previous_frame_time);
+
+	//Add delta time
+	if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME){
+		SDL_Delay(time_to_wait);
+	}
+	
+	
 
 	cube_rotation.x += 0.01;
 	cube_rotation.y += 0.01;
