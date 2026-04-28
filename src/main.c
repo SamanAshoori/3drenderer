@@ -7,6 +7,7 @@
 
 // Global variables
 bool is_running = false;
+int previous_frame_time = 0;
 
 //////////////////////
 //	Declare an array of vectors/points
@@ -87,6 +88,10 @@ vec2_t project(vec3_t point){
 
 void update(void)
 {
+	//Add delta time
+	SDL_Delay(FRAME_TARGET_TIME);
+	previous_frame_time = SDL_GetTicks();
+
 	cube_rotation.x += 0.01;
 	cube_rotation.y += 0.01;
 	cube_rotation.z += 0.01;
