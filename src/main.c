@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include "display.h"
 #include "vector.h"
+#include "mesh.h"
 
 #define N_MESH_VERTICES 8
 vec3_t mesh_vertices[N_MESH_VERTICES] = {
@@ -94,6 +95,14 @@ void update(void)
 	cube_rotation.x += 0.01;
 	cube_rotation.y += 0.01;
 	cube_rotation.z += 0.01;
+
+	//loop all the triangle faces of our mesh
+	for(int i = 0; i < N_MESH_FACES;i++)
+	{
+
+
+	}
+
 	/*for (int i = 0;i< N_POINTS;i++){
 		vec3_t point = cube_points[i];
 
