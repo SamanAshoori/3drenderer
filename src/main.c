@@ -9,12 +9,6 @@
 bool is_running = false;
 int previous_frame_time = 0;
 
-//////////////////////
-//	Declare an array of vectors/points
-///////////////////////////
-#define N_POINTS (9 * 9 * 9)
-vec3_t cube_points[N_POINTS]; //9X9X9 cube;
-vec2_t projected_points[N_POINTS];
 
 vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
 vec3_t cube_rotation = {.x = 0, .y = 0, .z = 0};
