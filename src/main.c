@@ -36,20 +36,6 @@ void setup(void)
 		//streaming means we will updating the texture frame by frame
 		colour_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 	}
-
-	int point_count = 0;
-
-	//Start loading my array of vectors
-	//from -1 to 1 (in this 9x9x9 cube)
-	for(float x = -1; x<= 1; x += 0.25){
-		for(float y = -1; y<= 1; y += 0.25 ){
-			for(float z = -1; z<= 1; z += 0.25){
-				//create a new vec3 for each run of the loop
-				vec3_t new_point = {.x = x,.y = y,.z = z};
-				cube_points[point_count++] = new_point;
-			}
-		}
-	}
 }
 
 void process_input(void)
@@ -95,7 +81,7 @@ void update(void)
 	cube_rotation.x += 0.01;
 	cube_rotation.y += 0.01;
 	cube_rotation.z += 0.01;
-	for (int i = 0;i< N_POINTS;i++){
+	/*for (int i = 0;i< N_POINTS;i++){
 		vec3_t point = cube_points[i];
 
 		//rotation here
@@ -111,14 +97,15 @@ void update(void)
 
 		//Save the projected 2d vector in the array of vector points
 		projected_points[i] = projected_point;
-	}
+	}*/
 }
 
 void render(void)
 {
-	//draw_grid(50);
+	draw_grid(50);
 
 	//Loop all projected points
+	/*
 	for (int i = 0;i < N_POINTS;i++){
 		vec2_t projected_point = projected_points[i];
 		draw_rect(
@@ -130,6 +117,7 @@ void render(void)
 		);
 
 	}
+	*/
 
 
 	render_colour_buffer();
