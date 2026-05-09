@@ -147,12 +147,16 @@ void render(void)
 
 	//Loop all projected triangle
 	
+	/*
 	for (int i = 0;i < N_MESH_FACES;i++){
 		triangle_t triangle = triangles_to_render[i];
 		draw_rect(triangle.points[0].x,triangle.points[0].y,3,3,0xFF00FF00);
 		draw_rect(triangle.points[1].x,triangle.points[1].y,3,3,0xFF00FF00);
 		draw_rect(triangle.points[2].x,triangle.points[2].y,3,3,0xFF00FF00);
 	}
+	*/
+
+	draw_line(100,200,300,50,0xFF00FF00);
 	
 
 
@@ -164,10 +168,7 @@ void render(void)
 	SDL_RenderPresent(renderer);
 }
 
-void draw_line(int x0,int y0, int x1, int y1){
-	int delta_x = (x1 - x0);
-	int delta_y = (y1 - y0);
-}
+
 
 int main(void)
 {
