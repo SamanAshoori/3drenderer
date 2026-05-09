@@ -138,16 +138,16 @@ void draw_line(int x0,int y0, int x1, int y1, uint32_t colour){
 	int delta_y = (y1 - y0);
 
 	//what is the rise (side length) - sometimes delta y is larger
-	int side_length = abs(delta_x) >= abs(delta_y) ? abs(delta_x) : abs(delta_y);
+	int longest_side_length = (abs(delta_x) >= abs(delta_y)) ? abs(delta_x) : abs(delta_y);
 
 	//find out how much to increment in both x and y in each step
-	float x_inc = delta_x / (float)(side_length);
-	float y_inc = delta_y / (float)(side_length);
+	float x_inc = delta_x / (float)(longest_side_length);
+	float y_inc = delta_y / (float)(longest_side_length);
 
 	float current_x = x0;
 	float current_y = y0;
 
-	for (int i = 0; i <= side_length;i++)
+	for (int i = 0; i <= longest_side_length;i++)
 	{
 		draw_pixel(round(current_x),round(current_y),colour);
 		current_x += x_inc;
@@ -156,6 +156,15 @@ void draw_line(int x0,int y0, int x1, int y1, uint32_t colour){
 
 
 }
+
+void draw_triangle(int x0, int y0,int x1, int y1,int x2, int y2,uint32_t colour){
+	draw_line(x0,y0,x1,y1,colour);
+	draw_line(x1,y1,x2,y2,colour);
+	draw_line(x2,y2,x0,y0,colour);
+
+}
+	
+
 void destroy_window(void)
 {
 	// Free the colour buffer memory
