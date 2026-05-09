@@ -164,6 +164,11 @@ void render(void)
 	SDL_RenderPresent(renderer);
 }
 
+void draw_line(int x0,int y0, int x1, int y1){
+	int delta_x = (x1 - x0);
+	int delta_y = (y1 - y0);
+}
+
 int main(void)
 {
 	is_running = initalize_window();
