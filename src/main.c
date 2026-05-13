@@ -79,8 +79,6 @@ void update(void)
 		SDL_Delay(time_to_wait);
 	}
 	
-	
-
 	cube_rotation.x += 0.01;
 	cube_rotation.y += 0.01;
 	cube_rotation.z += 0.01;
@@ -169,8 +167,6 @@ void render(void)
 		);
 	}
 	
-
-
 	render_colour_buffer();
 	clear_color_buffer(0xFF000000);
 
