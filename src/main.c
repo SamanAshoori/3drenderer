@@ -164,7 +164,7 @@ void render(void)
 			triangle.points[1].y,
 			triangle.points[2].x,
 			triangle.points[2].y,
-			0xFF00FF00
+			0xFF0000FF
 		);
 	}
 	
