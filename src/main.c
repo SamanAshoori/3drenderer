@@ -3,10 +3,11 @@
 #include <stdint.h>
 #include <SDL2/SDL.h>
 #include "display.h"
+#include "array.h"
 #include "vector.h"
 #include "mesh.h"
 
-triangle_t triangles_to_render[N_MESH_FACES];
+triangle_t* triangles_to_render = NULL;
 
 // Global variables
 bool is_running = false;
@@ -74,6 +75,9 @@ void update(void)
 	previous_frame_time = SDL_GetTicks();
 	uint64_t time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - previous_frame_time);
 
+	//Init array of triagnles to rednr
+	triangles_to_render = NULL;
+
 	//Add delta time
 	if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME){
 		SDL_Delay(time_to_wait);
@@ -116,7 +120,8 @@ void update(void)
 
 		}
 		//save projected triangle in array of triangles ot render
-		triangles_to_render[i] = projected_triangle;
+		//triangles_to_render[i] = projected_triangle;
+		array_push(triangles_to_render,projected_triangle);
 
 	}
 
@@ -142,10 +147,9 @@ void update(void)
 void render(void)
 {
 	//draw_grid(10);
-
+	int num_triangles = array_length(triangles_to_render);
 	//Loop all projected triangle
-	
-	for (int i = 0;i < N_MESH_FACES;i++){	
+	for (int i = 0;i < num_triangles;i++){	
 		triangle_t triangle = triangles_to_render[i];
 
 		//draw vertex points
@@ -168,6 +172,7 @@ void render(void)
 	
 	render_colour_buffer();
 	clear_color_buffer(0xFF000000);
+	array_free(triangles_to_render);
 
 
 	// Present the back buffer to the screen
