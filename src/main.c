@@ -154,8 +154,6 @@ void render(void)
 		draw_rect(triangle.points[1].x,triangle.points[1].y,3,3,0xFF0000FF);
 		draw_rect(triangle.points[2].x,triangle.points[2].y,3,3,0xFF0000FF);
 		
-
-		
 		//draw triangle (unfilled)
 		draw_triangle(
 			triangle.points[0].x,
