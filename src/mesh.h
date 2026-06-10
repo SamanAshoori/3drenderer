@@ -11,6 +11,13 @@ extern vec3_t cube_vertices[N_CUBE_VERTICES];
 extern face_t cube_faces[N_CUBE_FACES];
 
 
+//an mesh is an array of faces and vertices - we need to use a dynamic array because we dont know mesh sizes
+typedef struct {
+    vec3_t* vertices; //dynamic array of vertices
+    face_t* faces; //dynamic array of faces
 
+} mesh_t;
+
+extern mesh_t mesh; //global mesh
 
 #endif
