@@ -168,7 +168,6 @@ void draw_triangle(int x0, int y0,int x1, int y1,int x2, int y2,uint32_t colour)
 void destroy_window(void)
 {
 	// Free the colour buffer memory
-	free(colour_buffer);
 	colour_buffer = NULL;
 
 	// Destroy the renderer and window by calling the appropriate SDL functions and passing in the pointers to the renderer and window

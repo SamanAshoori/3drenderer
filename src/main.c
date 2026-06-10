@@ -15,7 +15,6 @@ int previous_frame_time = 0;
 
 
 vec3_t camera_position = {.x = 0, .y = 0, .z = -5};
-vec3_t cube_rotation = {.x = 0, .y = 0, .z = 0};
 //3 degrees of freedom
 
 float fov_factor = 640;
@@ -40,6 +39,9 @@ void setup(void)
 		//streaming means we will updating the texture frame by frame
 		colour_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 	}
+
+	//loads cube stufff in mesh data steucture 
+	load_cube_mesh_data();
 }
 
 void process_input(void)
@@ -83,18 +85,19 @@ void update(void)
 		SDL_Delay(time_to_wait);
 	}
 	
-	cube_rotation.x += 0.01;
-	cube_rotation.y += 0.01;
-	cube_rotation.z += 0.01;
+	mesh.rotation.x += 0.01;
+	mesh.rotation.y += 0.01;
+	mesh.rotation.z += 0.01;
 
 	//loop all the triangle faces of our mesh
-	for(int i = 0; i < N_CUBE_FACES;i++)
+	int num_faces = array_length(mesh.faces);
+	for(int i = 0; i < num_faces;i++)
 	{
-		face_t cube_face = cube_faces[i];
+		face_t mesh_face = mesh.faces[i];
 		vec3_t face_vertices[3];
-		face_vertices[0] = cube_vertices[cube_face.a - 1];
-		face_vertices[1] = cube_vertices[cube_face.b - 1];
-		face_vertices[2] = cube_vertices[cube_face.c - 1];
+		face_vertices[0] = mesh.vertices[mesh_face.a - 1];
+		face_vertices[1] = mesh.vertices[mesh_face.b - 1];
+		face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
 		triangle_t projected_triangle;
 
@@ -102,9 +105,9 @@ void update(void)
 		for (int j = 0; j < 3;j++){
 			vec3_t transformed_vertex = face_vertices[j];
 			//rotation here
-			transformed_vertex = vec3_rotate_x(transformed_vertex,cube_rotation.x);
-			transformed_vertex = vec3_rotate_y(transformed_vertex,cube_rotation.y);
-			transformed_vertex = vec3_rotate_z(transformed_vertex,cube_rotation.z);
+			transformed_vertex = vec3_rotate_x(transformed_vertex,mesh.rotation.x);
+			transformed_vertex = vec3_rotate_y(transformed_vertex,mesh.rotation.y);
+			transformed_vertex = vec3_rotate_z(transformed_vertex,mesh.rotation.z);
 
 			//translate vertex away from camera
 			transformed_vertex.z -= camera_position.z;
@@ -129,9 +132,9 @@ void update(void)
 		vec3_t point = cube_points[i];
 
 		//rotation here
-		vec3_t transformed_point = vec3_rotate_x(point,cube_rotation.x);
-		transformed_point = vec3_rotate_y(transformed_point,cube_rotation.y);
-		//transformed_point = vec3_rotate_z(transformed_point,cube_rotation.z);
+		vec3_t transformed_point = vec3_rotate_x(point,mesh.rotation.x);
+		transformed_point = vec3_rotate_y(transformed_point,mesh.rotation.y);
+		//transformed_point = vec3_rotate_z(transformed_point,mesh.rotation.z);
 
 		//Translating the point away from the camera
 		transformed_point.z -= camera_position.z;
@@ -179,7 +182,14 @@ void render(void)
 	SDL_RenderPresent(renderer);
 }
 
+////free the memory that was dynamically allocated by program
 
+void free_resources(void){
+	free(colour_buffer);
+	array_free(mesh.faces);
+	array_free(mesh.vertices);
+
+}
 
 int main(void)
 {
@@ -195,6 +205,7 @@ int main(void)
 	}
 
 	// Free the colour buffer memory
+	free_resources();
 	destroy_window();
 	return 0;
 }
