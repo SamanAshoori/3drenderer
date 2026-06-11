@@ -6,3 +6,9 @@ run:
 
 clean:
 	rm renderer
+
+test:
+	gcc -Wall -std=c99 ./src/test.c -lSDL2 -lm -o test
+
+runtest:
+	./test
