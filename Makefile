@@ -7,8 +7,8 @@ run:
 clean:
 	rm renderer
 
-test:
+make_test:
 	gcc -Wall -std=c99 ./src/test.c -lSDL2 -lm -o test
 
-runtest:
+run_test:
 	./test
