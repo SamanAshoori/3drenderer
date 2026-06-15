@@ -24,5 +24,6 @@ extern mesh_t mesh; //global mesh
 
 void load_cube_mesh_data(void);
 void load_obj_file_data(char*);
+void saman_load_obj_file_data(char*);
 
 #endif
