@@ -52,6 +52,21 @@ void load_cube_mesh_data(void){
 	}
 }
 
-void obj_file_data(char* filename){
-	//TO DO read contents of obj and load vertices and faces
+void load_obj_file_data(char* filename){
+    FILE *fptr = fopen(filename, "r");
+    char line[1000];
+    
+    while (fgets(line, 1000, fptr)){
+        if (line[0] == 'v' && line[1] != 'n' && line[1] != 't'){
+            vec3_t vertex;
+            sscanf(line, "v %f %f %f", &vertex.x, &vertex.y, &vertex.z);
+            array_push(mesh.vertices, vertex);
+        }
+        if (line[0] == 'f'){
+            face_t face;
+            sscanf(line, "f %d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &face.a, &face.b, &face.c);
+            array_push(mesh.faces, face);
+        }
+    }
+    fclose(fptr);
 }

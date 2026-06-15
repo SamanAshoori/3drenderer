@@ -41,7 +41,7 @@ void setup(void)
 	}
 
 	//loads cube stufff in mesh data steucture 
-	load_obj_file_data("./assets/cube.obj");
+	load_obj_file_data("./assets/f22.obj");
 }
 
 void process_input(void)
