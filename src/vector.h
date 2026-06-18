@@ -17,8 +17,14 @@ vec3_t vec3_rotate_x(vec3_t v,float angle);
 vec3_t vec3_rotate_y(vec3_t v,float angle);
 vec3_t vec3_rotate_z(vec3_t v,float angle);
 
-//TODO add functions to manipulate vectors 
 
+//funcs for vec2d
+float vec2_length(vec2_t v);
+
+
+
+//funcs for vec3d
+float vec3_length(vec3_t v);
 
 
 #endif
