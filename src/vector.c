@@ -23,6 +23,21 @@ vec2_t vec2_subtract(vec2_t a, vec2_t b){
     return result;
 }
 
+vec2_t vec2_multiply(vec2_t v, float factor){
+    vec2_t result = {
+        .x = v.x * factor,
+        .y = v.y * factor
+    };
+    return result;
+}
+vec2_t vec2_divide(vec2_t v, float factor){
+    vec2_t result = {
+        .x = v.x / factor,
+        .y = v.y / factor
+    };
+    return result;
+}
+
 
 
 //vector 3d functions  
@@ -43,6 +58,23 @@ vec3_t vec3_subtract(vec3_t a, vec3_t b){
         .x = a.x - b.x,
         .y = a.y - b.y,
         .z = a.z - b.z
+    };
+    return result;
+}
+
+vec3_t vec3_multiply(vec3_t v, float factor){
+    vec3_t result = {
+        .x = v.x * factor,
+        .y = v.y * factor,
+        .z = v.z * factor
+    };
+    return result;
+}
+vec3_t vec3_divide(vec3_t v, float factor){
+    vec3_t result = {
+        .x = v.x / factor,
+        .y = v.y / factor,
+        .z = v.z / factor
     };
     return result;
 }
