@@ -46,7 +46,7 @@ float vec2_dot(vec2_t a, vec2_t b){
 
 
 //vector 3d functions  
-float vec2_length(vec3_t v){
+float vec3_length(vec3_t v){
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
