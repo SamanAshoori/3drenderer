@@ -126,6 +126,9 @@ void update(void)
 		//compute normal using cross product
 		vec3_t normal = vec3_cross(vector_ab,vector_ac);
 
+		//normalise the normal
+		vec3_normalise(&normal);
+
 		//Find the vector between a point in the triangle and the camera origin
 		vec3_t camera_ray = vec3_subtract(camera_position,vector_a);
 
