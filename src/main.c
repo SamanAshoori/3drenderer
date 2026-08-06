@@ -190,7 +190,7 @@ void render(void)
 	//	);
 	//}
 
-	draw_filled_triangle(300,100,50,400,500,700,0xFF00FF00);
+	draw_filled_triangle(500,300,250,600,700,900,0xFF00FF00);
 
 	array_free(triangles_to_render);
 	render_colour_buffer();
