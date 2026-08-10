@@ -19,7 +19,7 @@ void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1,int x2,int y2, uin
     float x_end = x0;
 
     //loop all the scan lines from top to bottom
-    for (int y = 0; y <= y2;y++){
+    for (int y = y0; y <= y2;y++){
         draw_line(x_start,y,x_end,y,colour);
         x_start += inv_slope_1;
         x_end += inv_slope_2;
@@ -28,8 +28,22 @@ void fill_flat_bottom_triangle(int x0, int y0, int x1, int y1,int x2,int y2, uin
 
 }
 
-void fill_flat_top_triangle(int x0, int y0, int x1, int y1,int x2,int y2,uint32_t colour){
 
+void fill_flat_top_triangle(int x0, int y0, int x1, int y1,int x2,int y2,uint32_t colour){
+    //find the two slopes from two triangle legs
+    float inv_slope_1 = (float)(x2-x0) / (y2-y0);
+    float inv_slope_2 = (float)(x2-x1) / (y2-y1);
+
+    //x_start and x_end from the bottom vertex (x2,y2)
+    float x_start = x2;
+    float x_end = x2;
+
+    //loop all the scan lines from bottom to top
+    for (int y = y2; y >= y0;y--){
+        draw_line(x_start,y,x_end,y,colour);
+        x_start -= inv_slope_1;
+        x_end -= inv_slope_2;
+    }
 }
 
 void draw_filled_triangle(int x0,int y0,int x1,int y1,int x2, int y2,uint32_t colour){
