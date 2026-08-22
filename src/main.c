@@ -43,8 +43,8 @@ void setup(void)
 		colour_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 	}
 
-	// loads cube stufff in mesh data steucture
-	load_obj_file_data("./assets/cube.obj");
+	load_cube_mesh_data();
+	//load_obj_file_data("./assets/f22.obj");
 }
 
 
@@ -103,8 +103,8 @@ void update(void)
 	}
 
 	mesh.rotation.x += 0.01;
-	mesh.rotation.y += 0.00;
-	mesh.rotation.z += 0.00;
+	mesh.rotation.y += 0.01;
+	mesh.rotation.z += 0.01;
 
 	// loop all the triangle faces of our mesh
 	int num_faces = array_length(mesh.faces);
@@ -166,19 +166,28 @@ void update(void)
 			}
 		}
 
-		triangle_t projected_triangle;
+		
 
+		vec2_t projected_points[3];
 		// loop all three vertices to perform projection
 		for (int j = 0; j < 3; j++)
 		{
 			// project current vertex
-			vec2_t projected_point = project(transformed_vertices[j]);
+			projected_points[j] = project(transformed_vertices[j]);
 
 			// scale and translate the projected point to midddle of screen
-			projected_point.x += (window_width / 2);
-			projected_point.y += (window_height / 2);
-			projected_triangle.points[j] = projected_point;
+			projected_points[j].x += (window_width / 2);
+			projected_points[j].y += (window_height / 2);
 		}
+
+		triangle_t projected_triangle = {
+			.points = {
+				{projected_points[0].x,projected_points[0].y},
+				{projected_points[1].x,projected_points[1].y},
+				{projected_points[2].x,projected_points[2].y}
+			},
+			.colour = mesh_face.colour
+		};
 		// save projected triangle in array of triangles ot render
 		// triangles_to_render[i] = projected_triangle;
 		array_push(triangles_to_render, projected_triangle);
@@ -200,7 +209,7 @@ void render(void) {
                 triangle.points[0].x, triangle.points[0].y, // vertex A
                 triangle.points[1].x, triangle.points[1].y, // vertex B
                 triangle.points[2].x, triangle.points[2].y, // vertex C
-                0xFF555555
+				triangle.colour
             );
         }
 
