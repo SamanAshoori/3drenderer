@@ -9,6 +9,10 @@ SDL_Texture* colour_buffer_texture = NULL;
 int window_width = 800;
 int window_height = 600;
 
+// single definition for the extern globals declared in display.h
+enum cull_method cull_method;
+enum render_method render_method;
+
 //Set colour buffertexture
 
 
@@ -125,9 +129,10 @@ void draw_rect(int x,int y, int height, int width, uint32_t colour){
 void draw_rectangle(int x,int y, int height, int width, uint32_t colour){
 	for (int i = 0; i <width;i++){
 		for(int j = 0; j < height; j++){
+			// offset each pixel by the rectangle's origin instead of drawing at (i,j)
 			int current_x = x + i;
 			int current_y = y + j;
-			draw_pixel(i,j,0xff0000ff);
+			draw_pixel(current_x,current_y,colour);
 		}
 	}
 
@@ -176,5 +181,3 @@ void destroy_window(void)
 	SDL_Quit();
 	// note how we destroy in reverse order of creation, first the renderer then the window, then quit SDL
 }
-
-

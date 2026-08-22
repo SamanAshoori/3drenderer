@@ -7,19 +7,23 @@
 #include "vector.h"
 #include "mesh.h"
 
-triangle_t* triangles_to_render = NULL;
+triangle_t *triangles_to_render = NULL;
 
 // Global variables
 bool is_running = false;
 int previous_frame_time = 0;
 
-vec3_t camera_position = {0,0,0};
-//3 degrees of freedom
+vec3_t camera_position = {0, 0, 0};
+// 3 degrees of freedom
 
 float fov_factor = 640;
 
 void setup(void)
 {
+
+	// init render and cull mode
+	render_method = RENDER_WIRE;
+	cull_method = CULL_BACKFACE;
 	// Allocate the required bytes in memory for colour buffer
 	// Should be width * height * bytes per pixel (4 for RGBA)
 	// malloc returns a pointer to the allocated memory so we have to cast it to the correct type (uint32_t*)
@@ -34,14 +38,16 @@ void setup(void)
 	}
 	else
 	{
-		//SDL_PIxelFormat means that the pixels are ALPHA,RGB Colours and each pixel has 8 bits which is why its called AGBR8888
-		//streaming means we will updating the texture frame by frame
-		colour_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
+		// SDL_PIxelFormat means that the pixels are ALPHA,RGB Colours and each pixel has 8 bits which is why its called AGBR8888
+		// streaming means we will updating the texture frame by frame
+		colour_buffer_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, window_width, window_height);
 	}
 
-	//loads cube stufff in mesh data steucture 
+	// loads cube stufff in mesh data steucture
 	load_obj_file_data("./assets/cube.obj");
 }
+
+
 
 void process_input(void)
 {
@@ -57,16 +63,28 @@ void process_input(void)
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE)
 			is_running = false;
+		if (event.key.keysym.sym == SDLK_1)
+			render_method = RENDER_WIRE_VERTEX;
+		if (event.key.keysym.sym == SDLK_2)
+			render_method = RENDER_WIRE;
+		if (event.key.keysym.sym == SDLK_3)
+			render_method = RENDER_FILL_TRIANGLE;
+		if (event.key.keysym.sym == SDLK_4)
+			render_method = RENDER_FILL_TRIANGLE_WIRE;
+		if (event.key.keysym.sym == SDLK_c)
+			cull_method = CULL_BACKFACE;
+		if (event.key.keysym.sym == SDLK_d)
+			cull_method = CULL_NONE;
 		break;
 	}
 }
 
-//Functions that recieves 3d vector and retruns a 2d point
-vec2_t project(vec3_t point){
+// Functions that recieves 3d vector and retruns a 2d point
+vec2_t project(vec3_t point)
+{
 	vec2_t projected_point = {
-		.x =(fov_factor * point.x) / point.z,
-		.y =(fov_factor * point.y) / point.z
-	};
+		.x = (fov_factor * point.x) / point.z,
+		.y = (fov_factor * point.y) / point.z};
 	return projected_point;
 }
 
@@ -75,21 +93,22 @@ void update(void)
 	previous_frame_time = SDL_GetTicks();
 	uint64_t time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - previous_frame_time);
 
-	//Init array of triagnles to rednr
+	// Init array of triagnles to rednr
 	triangles_to_render = NULL;
 
-	//Add delta time
-	if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME){
+	// Add delta time
+	if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
+	{
 		SDL_Delay(time_to_wait);
 	}
-	
+
 	mesh.rotation.x += 0.01;
 	mesh.rotation.y += 0.00;
 	mesh.rotation.z += 0.00;
 
-	//loop all the triangle faces of our mesh
+	// loop all the triangle faces of our mesh
 	int num_faces = array_length(mesh.faces);
-	for(int i = 0; i < num_faces;i++)
+	for (int i = 0; i < num_faces; i++)
 	{
 		face_t mesh_face = mesh.faces[i];
 		vec3_t face_vertices[3];
@@ -99,116 +118,127 @@ void update(void)
 
 		vec3_t transformed_vertices[3];
 
-		//loop all 3 vertices of current face
-		for (int j = 0; j < 3;j++){	
+		// loop all 3 vertices of current face
+		for (int j = 0; j < 3; j++)
+		{
 			vec3_t transformed_vertex = face_vertices[j];
-			//rotation here
-			transformed_vertex = vec3_rotate_x(transformed_vertex,mesh.rotation.x);
-			transformed_vertex = vec3_rotate_y(transformed_vertex,mesh.rotation.y);
-			transformed_vertex = vec3_rotate_z(transformed_vertex,mesh.rotation.z);
+			// rotation here
+			transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
+			transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
+			transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 
-			//translate vertex away from camera
+			// translate vertex away from camera
 			transformed_vertex.z += 5;
 
-			//save transformed vertex in array of transformed vertcies
+			// save transformed vertex in array of transformed vertcies
 			transformed_vertices[j] = transformed_vertex;
 		}
 
-		//Check for backface culling
-		vec3_t vector_a = transformed_vertices[0];
-		vec3_t vector_b = transformed_vertices[1]; 
-		vec3_t vector_c = transformed_vertices[2];
+		if (cull_method == CULL_BACKFACE)
+		{
+			// Checks  for backface culling
+			vec3_t vector_a = transformed_vertices[0];
+			vec3_t vector_b = transformed_vertices[1];
+			vec3_t vector_c = transformed_vertices[2];
 
-		//get vector subtractions of B-A and C-A
-		vec3_t vector_ab = vec3_subtract(vector_b,vector_a);
-		vec3_t vector_ac = vec3_subtract(vector_c,vector_a);
-		vec3_normalise(&vector_ab);
-		vec3_normalise(&vector_ac);
+			// get vector subtractions of B-A and C-A
+			vec3_t vector_ab = vec3_subtract(vector_b, vector_a);
+			vec3_t vector_ac = vec3_subtract(vector_c, vector_a);
+			vec3_normalise(&vector_ab);
+			vec3_normalise(&vector_ac);
 
-		//compute normal using cross product
-		vec3_t normal = vec3_cross(vector_ab,vector_ac);
+			// compute normal using cross product
+			vec3_t normal = vec3_cross(vector_ab, vector_ac);
 
-		//normalise the normal
-		vec3_normalise(&normal);
+			// normalise the normal
+			vec3_normalise(&normal);
 
-		//Find the vector between a point in the triangle and the camera origin
-		vec3_t camera_ray = vec3_subtract(camera_position,vector_a);
+			// Find the vector between a point in the triangle and the camera origin
+			vec3_t camera_ray = vec3_subtract(camera_position, vector_a);
 
-		//calculte how alligned the ray is with the face normal (dot product)
-		float dot_normal_camera = vec3_dot(normal,camera_ray);
+			// calculte how alligned the ray is with the face normal (dot product)
+			float dot_normal_camera = vec3_dot(normal, camera_ray);
 
-		//bypass rendering triangls that are pointing away
-		if (dot_normal_camera < 0){
-			continue;
+			// bypass rendering triangls that are pointing away
+			if (dot_normal_camera < 0)
+			{
+				continue;
+			}
 		}
-
 
 		triangle_t projected_triangle;
 
-		//loop all three vertices to perform projection
+		// loop all three vertices to perform projection
 		for (int j = 0; j < 3; j++)
 		{
-			//project current vertex
+			// project current vertex
 			vec2_t projected_point = project(transformed_vertices[j]);
 
-			//scale and translate the projected point to midddle of screen
-			projected_point.x += (window_width/2);
-			projected_point.y += (window_height/2);
+			// scale and translate the projected point to midddle of screen
+			projected_point.x += (window_width / 2);
+			projected_point.y += (window_height / 2);
 			projected_triangle.points[j] = projected_point;
-
 		}
-		//save projected triangle in array of triangles ot render
-		//triangles_to_render[i] = projected_triangle;
-		array_push(triangles_to_render,projected_triangle);
+		// save projected triangle in array of triangles ot render
+		// triangles_to_render[i] = projected_triangle;
+		array_push(triangles_to_render, projected_triangle);
 	}
-
 }
 
-void render(void)
-{
-	//draw_grid(10);
-	int num_triangles = array_length(triangles_to_render);
-	//Loop all projected triangle
-	for (int i = 0;i < num_triangles;i++){	
-		triangle_t triangle = triangles_to_render[i];
-
-		//draw vertex points
-
-		draw_rect(triangle.points[0].x,triangle.points[0].y,3,3,0xFF00FF00);
-		draw_rect(triangle.points[1].x,triangle.points[1].y,3,3,0xFF00FF00);
-		draw_rect(triangle.points[2].x,triangle.points[2].y,3,3,0xFF00FF00);
-		
-		//draw triangle (unfilled)
-		draw_filled_triangle(
-			triangle.points[0].x,
-			triangle.points[0].y,
-			triangle.points[1].x,
-			triangle.points[1].y,
-			triangle.points[2].x,
-			triangle.points[2].y,
-			0xFF00FF00
-		);
-	}
+void render(void) {
+    SDL_RenderClear(renderer);
 
 
+    // Loop all projected triangles and render them
+    int num_triangles = array_length(triangles_to_render);
+    for (int i = 0; i < num_triangles; i++) {
+        triangle_t triangle = triangles_to_render[i];
 
-	array_free(triangles_to_render);
-	render_colour_buffer();
-	clear_color_buffer(0xFF000000);
-	
+        // Draw filled triangle
+        if (render_method == RENDER_FILL_TRIANGLE || render_method == RENDER_FILL_TRIANGLE_WIRE) {
+            draw_filled_triangle(
+                triangle.points[0].x, triangle.points[0].y, // vertex A
+                triangle.points[1].x, triangle.points[1].y, // vertex B
+                triangle.points[2].x, triangle.points[2].y, // vertex C
+                0xFF555555
+            );
+        }
 
+        // Draw triangle wireframe
+        if (render_method == RENDER_WIRE || render_method == RENDER_WIRE_VERTEX || render_method == RENDER_FILL_TRIANGLE_WIRE) {
+            draw_triangle(
+                triangle.points[0].x, triangle.points[0].y, // vertex A
+                triangle.points[1].x, triangle.points[1].y, // vertex B
+                triangle.points[2].x, triangle.points[2].y, // vertex C
+                0xFFFFFFFF
+            );
+        }
 
-	// Present the back buffer to the screen
-	SDL_RenderPresent(renderer);
+        // Draw triangle vertex points
+        if (render_method == RENDER_WIRE_VERTEX) {
+            draw_rect(triangle.points[0].x - 3, triangle.points[0].y - 3, 6, 6, 0xFFFF0000); // vertex A
+            draw_rect(triangle.points[1].x - 3, triangle.points[1].y - 3, 6, 6, 0xFFFF0000); // vertex B
+            draw_rect(triangle.points[2].x - 3, triangle.points[2].y - 3, 6, 6, 0xFFFF0000); // vertex C
+        }
+    }
+
+    // Clear the array of triangles to render every frame loop
+    array_free(triangles_to_render);
+
+    render_colour_buffer();
+
+    clear_color_buffer(0xFF000000);
+
+    SDL_RenderPresent(renderer);
 }
 
 ////free the memory that was dynamically allocated by program
 
-void free_resources(void){
+void free_resources(void)
+{
 	free(colour_buffer);
 	array_free(mesh.faces);
 	array_free(mesh.vertices);
-
 }
 
 int main(void)
