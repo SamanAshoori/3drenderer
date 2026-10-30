@@ -196,11 +196,18 @@ void update(void)
 		// save projected triangle in array of triangles ot render
 		// triangles_to_render[i] = projected_triangle;
 		array_push(triangles_to_render, projected_triangle);
-
-
 	}
-
 	//sort the triangles to render by avg_depth
+	int num_triangles = array_length(triangles_to_render);
+	for(int i = 0;i < num_triangles; i++){
+		for(int j = i; j < num_triangles; j++){
+			if(triangles_to_render[i].avg_depth < triangles_to_render[j].avg_depth){
+				triangle_t temp = triangles_to_render[i];
+				triangles_to_render[i] = triangles_to_render[j];
+				triangles_to_render[j] = temp;
+			}
+		}
+	}
 	
 }
 
