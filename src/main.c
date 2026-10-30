@@ -198,6 +198,7 @@ void update(void)
 		array_push(triangles_to_render, projected_triangle);
 	}
 	//sort the triangles to render by avg_depth
+	//simple sort (bubble which has bad 0n)
 	int num_triangles = array_length(triangles_to_render);
 	for(int i = 0;i < num_triangles; i++){
 		for(int j = i; j < num_triangles; j++){

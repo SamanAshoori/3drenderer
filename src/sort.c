@@ -1,4 +1,5 @@
 //making a radix sort in C
+#include <stdio.h> 
 
 //mini function to get the max real quick
 int getMax(int array[], int n){
