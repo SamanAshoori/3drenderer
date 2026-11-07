@@ -118,14 +118,15 @@ void update(void)
 
 		vec3_t transformed_vertices[3];
 
+
 		// loop all 3 vertices of current face
 		for (int j = 0; j < 3; j++)
 		{
 			vec3_t transformed_vertex = face_vertices[j];
 			// rotation here
-			transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
-			transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
-			transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
+
+			//TODO: Use a matrix to scale our original vertex
+			
 
 			// translate vertex away from camera
 			transformed_vertex.z += 5;
