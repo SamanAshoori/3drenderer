@@ -38,4 +38,6 @@ int main_test()
     {
         printf("face %d: a=%d b=%d c=%d\n", i, faces[i].a, faces[i].b, faces[i].c);
     }
+
+    return 0;
 }

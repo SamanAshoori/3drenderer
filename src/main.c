@@ -6,6 +6,7 @@
 #include "array.h"
 #include "vector.h"
 #include "mesh.h"
+#include "matrix.h"
 
 triangle_t *triangles_to_render = NULL;
 
@@ -105,6 +106,12 @@ void update(void)
 	mesh.rotation.x += 0.01;
 	mesh.rotation.y += 0.01;
 	mesh.rotation.z += 0.01;
+	mesh.scale.x += 0.002;
+	mesh.scale.y += 0.002;
+
+	//create a scale matrix to multiple mesh vertices
+	mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+	
 
 	// loop all the triangle faces of our mesh
 	int num_faces = array_length(mesh.faces);
@@ -116,16 +123,18 @@ void update(void)
 		face_vertices[1] = mesh.vertices[mesh_face.b - 1];
 		face_vertices[2] = mesh.vertices[mesh_face.c - 1];
 
-		vec3_t transformed_vertices[3];
+		vec4_t transformed_vertices[3];
 
 
 		// loop all 3 vertices of current face
 		for (int j = 0; j < 3; j++)
 		{
-			vec3_t transformed_vertex = face_vertices[j];
+			vec4_t transformed_vertex = vec4_from_vec3(face_vertices[j]);
 			// rotation here
 
 			//TODO: Use a matrix to scale our original vertex
+			//multiply scale matrix by vertex
+			transformed_vertex = mat4_mul_vec4(scale_matrix,transformed_vertex);
 			
 
 			// translate vertex away from camera
@@ -138,9 +147,9 @@ void update(void)
 		if (cull_method == CULL_BACKFACE)
 		{
 			// Checks  for backface culling
-			vec3_t vector_a = transformed_vertices[0];
-			vec3_t vector_b = transformed_vertices[1];
-			vec3_t vector_c = transformed_vertices[2];
+			vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]);
+			vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]);
+			vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]);
 
 			// get vector subtractions of B-A and C-A
 			vec3_t vector_ab = vec3_subtract(vector_b, vector_a);
@@ -174,7 +183,7 @@ void update(void)
 		for (int j = 0; j < 3; j++)
 		{
 			// project current vertex
-			projected_points[j] = project(transformed_vertices[j]);
+			projected_points[j] = project(vec3_from_vec4(transformed_vertices[j]));
 
 			// scale and translate the projected point to midddle of screen
 			projected_points[j].x += (window_width / 2);
