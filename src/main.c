@@ -103,14 +103,16 @@ void update(void)
 		SDL_Delay(time_to_wait);
 	}
 
-	mesh.rotation.x += 0.01;
-	mesh.rotation.y += 0.01;
-	mesh.rotation.z += 0.01;
-	mesh.scale.x += 0.002;
-	mesh.scale.y += 0.002;
+	//mesh.rotation.x += 0.01;
+	//mesh.rotation.y += 0.01;
+	//mesh.rotation.z += 0.01;
+	//mesh.scale.x += 0.002;
+	//mesh.scale.y += 0.002;
+	mesh.translation.x += 0.01;
 
-	//create a scale matrix to multiple mesh vertices
+	//create a scale matrix to multiple mesh vertices and translation matrix
 	mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+	mat4_t translation_matrix = mat4_make_translation(mesh.translation.x,mesh.translation.y,mesh.translation.z);
 	
 
 	// loop all the triangle faces of our mesh
@@ -135,6 +137,7 @@ void update(void)
 			//TODO: Use a matrix to scale our original vertex
 			//multiply scale matrix by vertex
 			transformed_vertex = mat4_mul_vec4(scale_matrix,transformed_vertex);
+			transformed_vertex = mat4_mul_vec4(translation_matrix,transformed_vertex);
 			
 
 			// translate vertex away from camera
