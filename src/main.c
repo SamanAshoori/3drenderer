@@ -109,6 +109,7 @@ void update(void)
 	//mesh.scale.x += 0.002;
 	//mesh.scale.y += 0.002;
 	mesh.translation.x += 0.01;
+	mesh.translation.z += 5;
 
 	//create a scale matrix to multiple mesh vertices and translation matrix
 	mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
@@ -141,7 +142,7 @@ void update(void)
 			
 
 			// translate vertex away from camera
-			transformed_vertex.z += 5;
+			//transformed_vertex.z += 5;
 
 			// save transformed vertex in array of transformed vertcies
 			transformed_vertices[j] = transformed_vertex;
