@@ -46,6 +46,8 @@ void setup(void)
 
 	load_cube_mesh_data();
 	//load_obj_file_data("./assets/f22.obj");
+
+
 }
 
 
@@ -103,18 +105,24 @@ void update(void)
 		SDL_Delay(time_to_wait);
 	}
 
-	//mesh.rotation.x += 0.01;
-	//mesh.rotation.y += 0.01;
-	//mesh.rotation.z += 0.01;
+	mesh.rotation.x += 0.01;
+	mesh.rotation.y += 0.01;
+	mesh.rotation.z += 0.01;
 	//mesh.scale.x += 0.002;
 	//mesh.scale.y += 0.002;
-	mesh.translation.x += 0.01;
-	mesh.translation.z += 5;
+	//mesh.translation.x += 0.01;
+	mesh.translation.z = 5;
 
-	//create a scale matrix to multiple mesh vertices and translation matrix
+	//create a scale matrix to multiple mesh vertices and translation matrix and roation matrix
+
 	mat4_t scale_matrix = mat4_make_scale(mesh.scale.x, mesh.scale.y, mesh.scale.z);
 	mat4_t translation_matrix = mat4_make_translation(mesh.translation.x,mesh.translation.y,mesh.translation.z);
-	
+	//create a rotation matrix to multiple mesh vertices
+	mat4_t rotation_matrix_x = mat4_make_rotation_x(mesh.rotation.x);
+	mat4_t rotation_matrix_y = mat4_make_rotation_y(mesh.rotation.y);
+	mat4_t rotation_matrix_z = mat4_make_rotation_z(mesh.rotation.z);
+
+
 
 	// loop all the triangle faces of our mesh
 	int num_faces = array_length(mesh.faces);
@@ -138,8 +146,12 @@ void update(void)
 			//TODO: Use a matrix to scale our original vertex
 			//multiply scale matrix by vertex
 			transformed_vertex = mat4_mul_vec4(scale_matrix,transformed_vertex);
+			transformed_vertex = mat4_mul_vec4(rotation_matrix_x,transformed_vertex);
+			transformed_vertex = mat4_mul_vec4(rotation_matrix_y,transformed_vertex);
+			transformed_vertex = mat4_mul_vec4(rotation_matrix_z,transformed_vertex);
 			transformed_vertex = mat4_mul_vec4(translation_matrix,transformed_vertex);
-			
+
+
 
 			// translate vertex away from camera
 			//transformed_vertex.z += 5;
@@ -180,7 +192,7 @@ void update(void)
 			}
 		}
 
-		
+
 
 		vec2_t projected_points[3];
 		// loop all three vertices to perform projection
@@ -205,7 +217,7 @@ void update(void)
 				{projected_points[2].x,projected_points[2].y}
 			},
 			.colour = mesh_face.colour,
-			.avg_depth = avg_depth,	
+			.avg_depth = avg_depth,
 		};
 		// save projected triangle in array of triangles ot render
 		// triangles_to_render[i] = projected_triangle;
@@ -223,7 +235,7 @@ void update(void)
 			}
 		}
 	}
-	
+
 }
 
 void render(void) {
