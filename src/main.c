@@ -141,20 +141,14 @@ void update(void)
 		for (int j = 0; j < 3; j++)
 		{
 			vec4_t transformed_vertex = vec4_from_vec3(face_vertices[j]);
-			// rotation here
+			//Starting a new world matrix combining scale, rotation and transformations
 
-			//TODO: Use a matrix to scale our original vertex
-			//multiply scale matrix by vertex
-			transformed_vertex = mat4_mul_vec4(scale_matrix,transformed_vertex);
-			transformed_vertex = mat4_mul_vec4(rotation_matrix_x,transformed_vertex);
-			transformed_vertex = mat4_mul_vec4(rotation_matrix_y,transformed_vertex);
-			transformed_vertex = mat4_mul_vec4(rotation_matrix_z,transformed_vertex);
-			transformed_vertex = mat4_mul_vec4(translation_matrix,transformed_vertex);
+			mat4_t world_matrix = mat4_identity();
 
 
 
-			// translate vertex away from camera
-			//transformed_vertex.z += 5;
+			//multiply the world vector by the original vector
+			transformed_vertex = mat4_mul_vec4(world_matrix, transformed_vertex);
 
 			// save transformed vertex in array of transformed vertcies
 			transformed_vertices[j] = transformed_vertex;
