@@ -144,7 +144,13 @@ void update(void)
 			//Starting a new world matrix combining scale, rotation and transformations
 
 			mat4_t world_matrix = mat4_identity();
-
+			world_matrix = mat4_mul_mat4(scale_matrix, world_matrix);
+			//rotations
+			world_matrix = mat4_mul_mat4(rotation_matrix_z, world_matrix);
+			world_matrix = mat4_mul_mat4(rotation_matrix_y, world_matrix);
+			world_matrix = mat4_mul_mat4(rotation_matrix_x, world_matrix);
+			//translations
+			world_matrix = mat4_mul_mat4(translation_matrix, world_matrix);
 
 
 			//multiply the world vector by the original vector
